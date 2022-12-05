@@ -1,0 +1,319 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Laravel App",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/employees": {
+            "post": {
+                "tags": [
+                    "Employee"
+                ],
+                "description": "Create new Employee.",
+                "operationId": "7683a7b1aec5103190be815e1e30f7da",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/Employee"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/Employee"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/overtimes": {
+            "post": {
+                "tags": [
+                    "Overtime"
+                ],
+                "description": "Create new Overtime.",
+                "operationId": "8d6a693b9fa954ceb013e8bf8aeb43c4",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/Overtime"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/Overtime"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/overtime-pays/calculate": {
+            "get": {
+                "tags": [
+                    "Calculate"
+                ],
+                "description": "get overtime-pays calculate.",
+                "operationId": "8d20c2e95ee613599b8534e5d4cfe1ee",
+                "parameters": [
+                    {
+                        "name": "month",
+                        "in": "query",
+                        "description": "Result filters separated by `params month`. Format: `date_format:Y-m`. Example=`2022-12`"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/Overtime"
+                                            }
+                                        },
+                                        {
+                                            "type": "object",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#components/schemas/Overtime"
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#components/schemas/Overtime"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/settings": {
+            "patch": {
+                "tags": [
+                    "Setting"
+                ],
+                "description": "Update the specified settings.",
+                "operationId": "40e67f1e877034419d2a086e7b71a55f",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "description": "Reference code",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#components/schemas/Setting"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/Setting"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Employee": {
+                "title": "Employee",
+                "required": [
+                    "name",
+                    "salary"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "salary": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "overtimes": {
+                        "readOnly": true,
+                        "allOf": [
+                            {
+                                "$ref": "#components/schemas/Overtime"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "Overtime": {
+                "title": "Overtime",
+                "required": [
+                    "employee_id",
+                    "date",
+                    "time_started",
+                    "time_ended"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "employee_id": {
+                        "type": "integer"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "time_started": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "time_ended": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "employee": {
+                        "readOnly": true,
+                        "allOf": [
+                            {
+                                "$ref": "#components/schemas/Employee"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "Reference": {
+                "title": "Reference",
+                "required": [
+                    "code",
+                    "name",
+                    "expression"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Salary / 173",
+                            "Fixed"
+                        ]
+                    },
+                    "expression": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "Setting": {
+                "title": "Setting",
+                "required": [
+                    "key",
+                    "value"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "key": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
